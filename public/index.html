@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日一句 ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        #quoteDisplay {
+            font-size: 22px;
+            line-height: 1.8;
+            color: #333;
+            min-height: 80px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        #quoteDisplay.loading {
+            opacity: 0.6;
+        }
+        #timeDisplay {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>✨ 每日一句</h1>
+        <p class="subtitle">点一下按钮，收获今日能量</p>
+        
+        <div id="quoteDisplay">👆 点击下面按钮</div>
+        <div id="timeDisplay"></div>
+        
+        <button id="getQuoteBtn">🌱 获取新句子</button>
+        <p class="footer">MVP v1.0 · 极简上线</p>
+    </div>
+
+    <script>
+        const quoteDisplay = document.getElementById('quoteDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const btn = document.getElementById('getQuoteBtn');
+
+        // 获取句子的函数
+        async function getQuote() {
+            // 按钮禁用，防止重复点击
+            btn.disabled = true;
+            quoteDisplay.textContent = '⏳ 加载中...';
+            quoteDisplay.className = 'loading';
+
+            try {
+                const response = await fetch('/api/quote');
+                const data = await response.json();
+                
+                if (data.success) {
+                    quoteDisplay.textContent = `"${data.quote}"`;
+                    timeDisplay.textContent = `🕐 ${data.time}`;
+                } else {
+                    quoteDisplay.textContent = '❌ 加载失败，请重试';
+                }
+            } catch (error) {
+                quoteDisplay.textContent = '❌ 网络异常，检查服务是否开启';
+                console.error('错误:', error);
+            } finally {
+                btn.disabled = false;
+                quoteDisplay.className = '';
+            }
+        }
+
+        // 点击按钮触发
+        btn.addEventListener('click', getQuote);
+
+        // 页面加载完成后，自动获取一次
+        getQuote();
+    </script>
+</body>
+</html>
