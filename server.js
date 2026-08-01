@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
-const port = 3000;
-
+const port = process.env.PORT || 3000;
 // 让前端页面可以被访问
 app.use(express.static('public'));
 
