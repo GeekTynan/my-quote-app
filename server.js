@@ -1,10 +1,11 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT;
-// 让前端页面可以被访问
+const port = process.env.PORT || 3000;
+
+// 提供静态文件（CSS、JS 等）
 app.use(express.static('public'));
 
-// API接口：返回随机一句
+// API 接口
 app.get('/api/quote', (req, res) => {
   const quotes = [
     "代码写下去，就有光。",
@@ -21,9 +22,16 @@ app.get('/api/quote', (req, res) => {
   });
 });
 
-// 启动服务器
+// ✅ 新增：处理根路径
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
+// ✅ 新增：处理其他所有路径（可选）
+app.get('*', (req, res) => {
+  res.sendFile(__dirname + '/public/index.html');
+});
+
 app.listen(port, () => {
   console.log(`✅ 服务已启动！`);
-  console.log(`🌐 访问地址: http://localhost:${port}`);
-  console.log(`⏹ 按 Ctrl+C 可停止服务`);
 });
